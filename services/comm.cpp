@@ -1275,7 +1275,7 @@ void Broadcasts::broadcastSchedulerVersion(int scheduler_port, const char* netna
     // Code for older schedulers than version 38. Has endianness problems, the message size
     // is not BROAD_BUFLEN and the netname is possibly not null-terminated.
     const char length_netname = strlen(netname);
-    const int schedbuflen = 5 + sizeof(uint64_t) + length_netname;
+    const int schedbuflen = 4 + sizeof(uint64_t) + 1 + length_netname;
     char *buf = new char[ schedbuflen ];
     buf[0] = 'I';
     buf[1] = 'C';
@@ -1284,7 +1284,7 @@ void Broadcasts::broadcastSchedulerVersion(int scheduler_port, const char* netna
     uint64_t tmp_time = starttime;
     memcpy(buf + 4, &tmp_time, sizeof(uint64_t));
     buf[4 + sizeof(uint64_t)] = length_netname;
-    strncpy(buf + 5 + sizeof(uint64_t), netname, length_netname);
+    memcpy(buf + 4 + sizeof(uint64_t) + 1, netname, length_netname);
     broadcastData(scheduler_port, buf, schedbuflen);
     delete[] buf;
     // Latest version.
